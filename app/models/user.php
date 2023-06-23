@@ -2,52 +2,44 @@
 
 namespace App\Models;
 
-use App\Models\account;
+// use Illuminate\Contracts\Auth\MustVerifyEmail;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Foundation\Auth\User as Authenticatable;
+use Illuminate\Notifications\Notifiable;
+use Laravel\Sanctum\HasApiTokens;
 
-class user extends database
+class User extends Authenticatable
 {
-    public function dangky($username, $password, $email)
-    {
-        $sql_sign = "INSERT INTO `khachhang`(`username`, `password`, `email`, `trangthaikh`, `vaitro`) VALUES (?,?,?,?,?)";
-        $this->pdo_execute($sql_sign, $username, $password, $email, '0', 'thành viên');
-    }
-    public function dangnhap($username, $password)
-    {
-        $sql_login = "SELECT * FROM `khachhang` WHERE (email = ? or username = ?) and password = ?";
-        return $this->pdo_query($sql_login, $username, $username, $password);
-    }
+    use HasApiTokens, HasFactory, Notifiable;
 
-    public function get_all_user()
-    {
-        $sql = 'SELECT * FROM `khachhang` ';
-        $user = $this->pdo_query($sql);
-        return $user;
-    }
+    /**
+     * The attributes that are mass assignable.
+     *
+     * @var array<int, string>
+     */
+    protected $fillable = [
+        'name',
+        'email',
+        'password',
+    ];
 
-    public function get_one_user($id)
-    {
-        $sql = 'SELECT * FROM `khachhang` where id = ? ';
-        $user =  $this->pdo_query_one($sql, $id);
-        return $user;
-    }
+    /**
+     * The attributes that should be hidden for serialization.
+     *
+     * @var array<int, string>
+     */
+    protected $hidden = [
+        'password',
+        'remember_token',
+    ];
 
-    // Update user for admin
-    public function update_user($tenhienthi, $email ,$phone, $vaitro, $id)
-    {
-
-        $sql = "UPDATE `khachhang` SET `tenhienthi`=?,`email`=?,`phone`=?,`vaitro`=?  WHERE id = ?";
-        $this->pdo_query($sql, $tenhienthi, $email ,$phone, $vaitro, $id);
-        return true;
-    }
-
-    // Update profile for user
-    public function update_profile($tenhienthi, $email ,$phone, $id)
-    {
-
-        $sql = "UPDATE `khachhang` SET `tenhienthi`=?,`email`=?,`phone`=?  WHERE id = ?";
-        $this->pdo_query($sql, $tenhienthi, $email ,$phone, $id);
-        return true;
-    }
-
-
+    /**
+     * The attributes that should be cast.
+     *
+     * @var array<string, string>
+     */
+    protected $casts = [
+        'email_verified_at' => 'datetime',
+        'password' => 'hashed',
+    ];
 }
